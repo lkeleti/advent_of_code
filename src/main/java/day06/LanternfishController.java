@@ -10,8 +10,8 @@ public class LanternfishController {
     public int guessNumberOfFish() {
         List<String> lines = readFile(Path.of("src/main/resources/day06.txt"));
         List<Integer> fishes = processData(lines);
-
-        return simulateDays(fishes, 256);
+//256
+        return simulateDays(fishes, 80);
     }
 
     private int simulateDays(List<Integer> fishes, int numberOfDays) {
@@ -26,7 +26,22 @@ public class LanternfishController {
             }
             fishes.addAll(newFishes);
         }
+        writeToFile(fishes);
         return fishes.size();
+    }
+
+    private void writeToFile(List<Integer> fishes) {
+        List<String> fishString = new ArrayList<>();
+        String numbers = "";
+        for (Integer fish: fishes) {
+            fishString.add(fish.toString());
+        }
+        try {
+            Files.write(Path.of("src/main/resources/day0601.txt"),fishString);
+        }
+        catch (IOException ioe) {
+            throw new IllegalArgumentException("Cannot write file!", ioe);
+        }
     }
 
     private List<String> readFile(Path path) {
