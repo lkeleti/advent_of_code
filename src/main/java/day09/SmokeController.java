@@ -5,6 +5,7 @@ import day08.Segment;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,27 +16,49 @@ public class SmokeController {
         List<String> lines = readFile(Path.of("src/main/resources/day09.txt"));
         int[][] dataArray = processData(lines);
         List<Position> minimums = findMin(dataArray);
-        System.out.println(minimums.size());
-        return 0;
+        return countCost(minimums, dataArray);
+    }
+
+    private int countCost(List<Position> minimums, int[][] dataArray) {
+        int sum = 0;
+        for (Position p : minimums) {
+            sum += dataArray[p.getI()][p.getJ()] + 1;
+        }
+        return sum;
     }
 
     private List<Position> findMin(int[][] dataArray) {
         List<Position> minimums = new ArrayList<>();
-        for (int i = 0; i < dataArray.length; i++) {
-            int localMinimum = dataArray[i][0];
-            for (int j = 0; j < dataArray[0].length; j++) {
-                if (dataArray[i][j] < localMinimum) {
-                    localMinimum = dataArray[i][j];
-                } else {
-                    //check down
-                    for (int k = j; k < dataArray[0].length; k++) {
-                        if (dataArray[i][k] < localMinimum) {
-                            localMinimum = dataArray[i][k];
-                        } else {
-                            minimums.add(new Position(i , k - 1));
-                            localMinimum = Integer.MAX_VALUE;
-                        }
+        int iMax = dataArray.length;
+        int jMax = dataArray[0].length;
+        for (int i = 0; i < iMax; i++) {
+            for (int j = 0; j < jMax; j++) {
+                boolean isMin = true;
+                if (i > 0 && i < iMax - 1) {
+                    if (dataArray[i][j] >= dataArray[i - 1][j] || dataArray[i][j] >= dataArray[i + 1][j]) {
+                        isMin = false;
                     }
+                }
+                if (i == 0 && dataArray[i][j] >= dataArray[i + 1][j]) {
+                    isMin = false;
+                }
+                if (i == iMax - 1 && dataArray[i][j] >= dataArray[i - 1][j]) {
+                    isMin = false;
+                }
+                if (j > 0 && j < jMax - 1) {
+                    if (dataArray[i][j] >= dataArray[i][j - 1] || dataArray[i][j] >= dataArray[i][j + 1]) {
+                        isMin = false;
+                    }
+                }
+                if (j == 0 && dataArray[i][j] >= dataArray[i][j + 1]) {
+                    isMin = false;
+                }
+                if (j == jMax - 1 && dataArray[i][j] >= dataArray[i][j - 1]) {
+                    isMin = false;
+                }
+
+                if (isMin) {
+                    minimums.add(new Position(i, j));
                 }
             }
         }

@@ -3,7 +3,7 @@ package day09;
 public class Day09 {
     public static void main(String[] args) {
         SmokeController smokeController = new SmokeController();
-        smokeController.countSmallestPoints();
+        System.out.println(smokeController.countSmallestPoints());
     }
 /*
 2199943210
