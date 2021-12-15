@@ -13,25 +13,25 @@ public class PolymerizationController {
     private String start;
     private char lastChar;
 
-    public int findDifference() {
-        List<String> lines = readFile(Path.of("src/main/resources/day14.txt"));
-        Hashtable<String, String> decoder = readFromLines(lines);
-        String decodedString = decodeCode(decoder);
-        int difference = checkCharacters(decodedString);
-        System.out.println(difference);
-        //10 -> 2703
-        //40 -> 2984946368465
-        return 0;
-    }
+//    public int findDifference() {
+//        List<String> lines = readFile(Path.of("src/main/resources/day14.txt"));
+//        Hashtable<String, String> decoder = readFromLines(lines);
+//        String decodedString = decodeCode(decoder);
+//        int difference = checkCharacters(decodedString);
+//        System.out.println(difference);
+//        //10 -> 2703
+//        //40 -> 2984946368465
+//        return 0;
+//    }
 
-    public void part2() {
+    public long part2(int cycleCounter) {
         List<String> lines = readFile(Path.of("src/main/resources/day14.txt"));
         Hashtable<String, String> decoder = readFromLines(lines);
         lastChar = start.charAt(start.length()-1);
-        simulate2(decoder, start);
+        return simulate2(decoder, start, cycleCounter);
     }
 
-    private long simulate2(Hashtable<String, String> decoder, String StringToDecode) {
+    private long simulate2(Hashtable<String, String> decoder, String StringToDecode, int cycleCounter) {
         Hashtable<String, Long> codePairsCounter = new Hashtable<>();
         for (int i=0; i < StringToDecode.length()-1; i++){
             String key = StringToDecode.substring(i, i+2);
@@ -43,7 +43,7 @@ public class PolymerizationController {
             }
         }
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < cycleCounter; i++) {
             Hashtable<String, Long> tmpCodePairsCounter = new Hashtable<>();
             for (String cp : codePairsCounter.keySet()) {
                 String newChar = decoder.get(cp);
@@ -76,8 +76,7 @@ public class PolymerizationController {
             }
         }
         System.out.println(codePairsCounter);
-        countChars(codePairsCounter);
-        return 0;
+        return countChars(codePairsCounter);
     }
 
     private long countChars(Hashtable<String, Long> pairs) {
@@ -116,48 +115,48 @@ public class PolymerizationController {
         return maxValue-minValue;
     }
 
-    private int checkCharacters(String decodedString) {
-        Hashtable<Character, Integer> chars = new Hashtable<>();
-        for (char c : decodedString.toCharArray()) {
-            if (!chars.containsKey(c)) {
-                chars.put(c, 1);
-            } else {
-                int newCount = chars.get(c) + 1;
-                chars.replace(c, newCount);
-            }
-        }
-        Collection<Integer> values = chars.values();
-        int minValue = Integer.MAX_VALUE;
-        int maxValue = 0;
+//    private int checkCharacters(String decodedString) {
+//        Hashtable<Character, Integer> chars = new Hashtable<>();
+//        for (char c : decodedString.toCharArray()) {
+//            if (!chars.containsKey(c)) {
+//                chars.put(c, 1);
+//            } else {
+//                int newCount = chars.get(c) + 1;
+//                chars.replace(c, newCount);
+//            }
+//        }
+//        Collection<Integer> values = chars.values();
+//        int minValue = Integer.MAX_VALUE;
+//        int maxValue = 0;
+//
+//        for (int i : values) {
+//            if (i > maxValue) {
+//                maxValue = i;
+//            }
+//
+//            if (i < minValue) {
+//                minValue = i;
+//            }
+//        }
+//        return maxValue - minValue;
+//    }
 
-        for (int i : values) {
-            if (i > maxValue) {
-                maxValue = i;
-            }
 
-            if (i < minValue) {
-                minValue = i;
-            }
-        }
-        return maxValue - minValue;
-    }
-
-
-    private String decodeCode(Hashtable<String, String> decoder) {
-        StringBuilder sb = new StringBuilder();
-        String codedString = start;
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < codedString.length() - 1; j++) {
-                String code = codedString.substring(j, j + 2);
-                sb.append(codedString.substring(j, j + 1));
-                sb.append(decoder.get(code));
-            }
-            sb.append(codedString.substring(codedString.length() - 1));
-            codedString = sb.toString();
-            sb.setLength(0);
-        }
-        return codedString;
-    }
+//    private String decodeCode(Hashtable<String, String> decoder) {
+//        StringBuilder sb = new StringBuilder();
+//        String codedString = start;
+//        for (int i = 0; i < 10; i++) {
+//            for (int j = 0; j < codedString.length() - 1; j++) {
+//                String code = codedString.substring(j, j + 2);
+//                sb.append(codedString.substring(j, j + 1));
+//                sb.append(decoder.get(code));
+//            }
+//            sb.append(codedString.substring(codedString.length() - 1));
+//            codedString = sb.toString();
+//            sb.setLength(0);
+//        }
+//        return codedString;
+//    }
 
     private Hashtable<String, String> readFromLines(List<String> lines) {
         Hashtable<String, String> decoder = new Hashtable<>();
