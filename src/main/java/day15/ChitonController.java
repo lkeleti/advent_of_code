@@ -14,7 +14,7 @@ public class ChitonController {
         List<Position> tracking = new ArrayList<>();
         Position start = new Position(0,0,1);
         tracking.add(start);
-        findpaths(start, new Position(9,9,1), labyrinth,tracking);
+        List<Position> t = findpaths(start, new Position(9,9,1), labyrinth,tracking);
         return 0;
     }
 
@@ -23,75 +23,67 @@ public class ChitonController {
         if (start == end) {
             return tracking;
         } else {
-            if (!(start.getxPos() == 0 || start.getxPos() > labyrinth[0].length)) {
-                if (start.getyPos() == 0) {
-                    //right, up, down
+            if (start.getxPos() == 0 ) {
+                newStart = right(start, labyrinth);
+                if (!(isInTheTracking(newStart, tracking))) {
+                    tracking.add(newStart);
+                    findpaths(newStart, end, labyrinth, tracking);
+                }
+            }
+            else {
+                if (start.getxPos() == labyrinth[0].length-1) {
+                    newStart = left(start, labyrinth);
+                    if (!(isInTheTracking(newStart, tracking))) {
+                        tracking.add(newStart);
+                        findpaths(newStart, end, labyrinth, tracking);
+                    }
+                }
+                else {
                     newStart = right(start, labyrinth);
                     if (!(isInTheTracking(newStart, tracking))) {
                         tracking.add(newStart);
                         findpaths(newStart, end, labyrinth, tracking);
                     }
-
-                    newStart = up(start, labyrinth);
+                    newStart = left(start, labyrinth);
                     if (!(isInTheTracking(newStart, tracking))) {
                         tracking.add(newStart);
                         findpaths(newStart, end, labyrinth, tracking);
                     }
+                }
+            }
 
-                    newStart = down(start, labyrinth);
-                    if (!(isInTheTracking(newStart, tracking))) {
-                        tracking.add(newStart);
-                        findpaths(newStart, end, labyrinth, tracking);
-                    }
-
-                } else {
-                    if (start.getyPos() > labyrinth.length) {
-                        //left, up, down
-                        newStart = left(start, labyrinth);
-                        if (!(isInTheTracking(newStart, tracking))) {
-                            tracking.add(newStart);
-                            findpaths(newStart, end, labyrinth, tracking);
-                        }
+            if (start.getyPos() == 0) {
+                newStart = down(start, labyrinth);
+                if (!(isInTheTracking(newStart, tracking))) {
+                    tracking.add(newStart);
+                    findpaths(newStart, end, labyrinth, tracking);
+                }
+                else {
+                    if (start.getyPos() == labyrinth.length-1) {
                         newStart = up(start, labyrinth);
                         if (!(isInTheTracking(newStart, tracking))) {
                             tracking.add(newStart);
                             findpaths(newStart, end, labyrinth, tracking);
                         }
-                        newStart = down(start, labyrinth);
-                        if (!(isInTheTracking(newStart, tracking))) {
-                            tracking.add(newStart);
-                            findpaths(newStart, end, labyrinth, tracking);
-                        }
-                    } else {
-                        //left, right, up, down
-                        newStart = right(start, labyrinth);
-                        if (!(isInTheTracking(newStart, tracking))) {
-                            tracking.add(newStart);
-                            findpaths(newStart, end, labyrinth, tracking);
-                        }
-
-                        newStart = left(start, labyrinth);
-                        if (!(isInTheTracking(newStart, tracking))) {
-                            tracking.add(newStart);
-                            findpaths(newStart, end, labyrinth, tracking);
-                        }
-
-                        newStart = down(start, labyrinth);
-                        if (!(isInTheTracking(newStart, tracking))) {
-                            tracking.add(newStart);
-                            findpaths(newStart, end, labyrinth, tracking);
-                        }
-
-                        newStart = up(start, labyrinth);
-                        if (!(isInTheTracking(newStart, tracking))) {
-                            tracking.add(newStart);
-                            findpaths(newStart, end, labyrinth, tracking);
+                        else {
+                            newStart = down(start, labyrinth);
+                            if (!(isInTheTracking(newStart, tracking))) {
+                                tracking.add(newStart);
+                                findpaths(newStart, end, labyrinth, tracking);
+                            }
+                            newStart = up(start, labyrinth);
+                            if (!(isInTheTracking(newStart, tracking))) {
+                                tracking.add(newStart);
+                                findpaths(newStart, end, labyrinth, tracking);
+                            }
                         }
                     }
                 }
 
             }
         }
+        newStart = tracking.get(tracking.size()-2);
+        findpaths(newStart, end, labyrinth, tracking);
         return tracking;
     }
 
@@ -129,11 +121,11 @@ public class ChitonController {
 
     private boolean isInTheTracking(Position newStart, List<Position> tracking) {
         for (Position position : tracking) {
-            if (position == newStart) {
-                return false;
+            if (position.equals(newStart)) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
 

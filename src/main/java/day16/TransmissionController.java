@@ -10,136 +10,129 @@ import java.util.List;
 
 public class TransmissionController {
 
-    private List<String> bits = new ArrayList<>();
     private int sumOfVersions = 0;
-    private int pointer = 0;
     private String stringToDecode = "";
+    private List<String> operations = new ArrayList<>();
 
     public long decodePacket() {
         List<String> lines = readFile(Path.of("src/main/resources/day16.txt"));
         readFromLines(lines);
-        System.out.println(bits);
+        System.out.println(stringToDecode);
         interpreter();
         System.out.println(sumOfVersions);
+        System.out.println(operations);
         return 0;
     }
 
     private void interpreter() {
-        while (pointer < bits.size()) {
-            stringToDecode = bits.get(pointer);
-            pointer++;
-            getPocket();
+        while (stringToDecode.length() > 8) {
+            getPocket(false);
         }
     }
 
-    private void getPocket() {
+    private int getPocket(boolean subCall) {
+        int subCounter = 0;
         getVersion();
+        subCounter += 3;
         String typeId = getTypeId();
+        subCounter += 3;
+
         if (typeId.equals("100")) {
             //literal
-            int value = getLiteral();
-        }
-        else {
+            subCounter += getLiteral();
+        } else {
+            if (typeId.equals("000")) {
+                //sum
+                operations.add("+");
+            }
+            if (typeId.equals("001")) {
+            //product
+                operations.add("*");
+            }
+
+            if (typeId.equals("010")) {
+                //minimum
+                operations.add("min");
+            }
+
+            if (typeId.equals("011")) {
+                //maximum
+                operations.add("max");
+            }
+            if (typeId.equals("101")) {
+                //greater than
+                operations.add("grt");
+            }
+            if (typeId.equals("110")) {
+                //greater than
+                operations.add("less");
+            }
+            if (typeId.equals("111")) {
+                //greater than
+                operations.add("equ");
+            }
+
+
             //operator
-            if (stringToDecode.length() < 1) {
-                stringToDecode += bits.get(pointer);
-                pointer++;
-            }
-            String lengthTypeId = stringToDecode.substring(0,1);
-            stringToDecode = stringToDecode.substring(1,stringToDecode.length());
-            if (lengthTypeId.equals("0")){
-                //numbers
-                if (stringToDecode.length() < 15) {
-                    stringToDecode += bits.get(pointer);
-                    pointer++;
-                }
-                if (stringToDecode.length() < 15) {
-                    stringToDecode += bits.get(pointer);
-                    pointer++;
-                }
+            String lengthTypeId = stringToDecode.substring(0, 1);
+            stringToDecode = stringToDecode.substring(1, stringToDecode.length());
+            subCounter++;
+            if (lengthTypeId.equals("0")) {
+                //15bits= total length in bits of sub-packets
 
-                int lengthOfSubPocket = Integer.parseInt(stringToDecode.substring(0,15),2);
+                int lengthOfSubPocket = Integer.parseInt(stringToDecode.substring(0, 15), 2);
                 stringToDecode = stringToDecode.substring(15, stringToDecode.length());
+                subCounter += 15;
 
-                if (stringToDecode.length() < lengthOfSubPocket) {
-                    int end = (lengthOfSubPocket - stringToDecode.length());
-                    for (int i = 0; i <  end /8; i++)
-                    stringToDecode += bits.get(pointer);
-                    pointer++;
+                operations.add("(");
+                while (subCounter < lengthOfSubPocket) {
+                    subCounter += getPocket(true);
                 }
-                if (stringToDecode.length() < lengthOfSubPocket) {
-                    stringToDecode += bits.get(pointer);
-                    pointer++;
-                }
+                operations.add(")");
 
-                getVersion();
-                getTypeId();
+            } else {
+                //11bits= number of subpackets
+                int numberOfSubPackets = Integer.parseInt(stringToDecode.substring(1, 11), 2);
+                stringToDecode = stringToDecode.substring(11, stringToDecode.length());
+                subCounter += 11;
 
-                int secondNumber = Integer.parseInt(stringToDecode.substring(0,lengthOfSubPocket-6),2);
-                stringToDecode = stringToDecode.substring(lengthOfSubPocket-6,stringToDecode.length());
-            }
-            else {
-                //SubPockets
-                if (stringToDecode.length() < 11) {
-                    stringToDecode += bits.get(pointer);
-                    pointer++;
-                }
-                if (stringToDecode.length() < 11) {
-                    stringToDecode += bits.get(pointer);
-                    pointer++;
-                }
-                int numberOfSubPackets = Integer.parseInt(stringToDecode.substring(1,11),2);
-                stringToDecode = stringToDecode.substring(11,stringToDecode.length());
-
+                operations.add("(");
                 for (int i = 0; i < numberOfSubPackets; i++) {
-                    getPocket();
+                    subCounter += getPocket(true);
                 }
+                operations.add(")");
             }
         }
+        return subCounter;
     }
 
     private int getLiteral() {
         String number = "";
-        if (stringToDecode.length() < 5) {
-            stringToDecode += bits.get(pointer);
-            pointer++;
-        }
+        int result = 0;
 
-        while (stringToDecode.substring(0,1).equals("1")) {
-            if (stringToDecode.length() < 5) {
-                stringToDecode += bits.get(pointer);
-                pointer++;
-            }
-            number += stringToDecode.substring(1,5);
-            stringToDecode = stringToDecode.substring(5,stringToDecode.length());
+        while (stringToDecode.substring(0, 1).equals("1")) {
+            number += stringToDecode.substring(1, 5);
+            stringToDecode = stringToDecode.substring(5, stringToDecode.length());
+            result += 5;
         }
         //last part of the number
-        if (stringToDecode.length() < 5) {
-            stringToDecode += bits.get(pointer);
-            pointer++;
-        }
-        number += stringToDecode.substring(1,5);
-        stringToDecode = stringToDecode.substring(5,stringToDecode.length());
-        return Integer.parseInt(number,2);
+        number += stringToDecode.substring(1, 5);
+        stringToDecode = stringToDecode.substring(5, stringToDecode.length());
+        result += 5;
+        operations.add(String.valueOf(Long.parseLong(number, 2)));
+        //int decodedNumber = Integer.parseInt(number, 2);
+        return result;
     }
 
     private String getTypeId() {
-        if (stringToDecode.length() < 3) {
-            stringToDecode += bits.get(pointer);
-            pointer++;
-        }
-        String result = stringToDecode.substring(0,3);
-        stringToDecode = stringToDecode.substring(3,stringToDecode.length());
+        String result = stringToDecode.substring(0, 3);
+        stringToDecode = stringToDecode.substring(3, stringToDecode.length());
         return result;
     }
 
     private void getVersion() {
-        if (stringToDecode.length() < 3) {
-            stringToDecode += bits.get(pointer);
-            pointer++;
-        }
-        sumOfVersions += Integer.parseInt(stringToDecode.substring(0,3),2);
-        stringToDecode = stringToDecode.substring(3,stringToDecode.length());
+        sumOfVersions += Integer.parseInt(stringToDecode.substring(0, 3), 2);
+        stringToDecode = stringToDecode.substring(3, stringToDecode.length());
     }
 
     private void readFromLines(List<String> lines) {
@@ -149,7 +142,7 @@ public class TransmissionController {
                 String bin = ("00000000" + Integer.toBinaryString(value));
                 int start = bin.length() - 8;
                 bin = bin.substring(start, start + 8);
-                bits.add(bin);
+                stringToDecode += bin;
             }
         }
     }
