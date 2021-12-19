@@ -84,11 +84,11 @@ public class TransmissionController {
                 stringToDecode = stringToDecode.substring(15, stringToDecode.length());
                 subCounter += 15;
 
-                operations.add("(");
+                //operations.add("(");
                 while (subCounter < lengthOfSubPocket) {
                     subCounter += getPocket(true);
                 }
-                operations.add(")");
+                //operations.add(")");
 
             } else {
                 //11bits= number of subpackets
@@ -96,11 +96,11 @@ public class TransmissionController {
                 stringToDecode = stringToDecode.substring(11, stringToDecode.length());
                 subCounter += 11;
 
-                operations.add("(");
+                //operations.add("(");
                 for (int i = 0; i < numberOfSubPackets; i++) {
                     subCounter += getPocket(true);
                 }
-                operations.add(")");
+                //operations.add(")");
             }
         }
         return subCounter;

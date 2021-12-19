@@ -25,8 +25,8 @@ public class LauncherController {
         readFromLines(lines);
         //for (int i = -2*endX; i < 2*endX; i++) {
             //for (int j = -2*endY; j > 2*endY; j--) {
-        for (int i = -20000; i < 20000; i++) {
-            for (int j = 20000; j > -20000; j--) {
+        for (int i = 0; i < 2000; i++) {
+            for (int j = 2000; j > -2000; j--) {
                 if (simulate(i,j)) {
                     System.out.println(i + ", " + j);
                 }
@@ -45,25 +45,17 @@ public class LauncherController {
     private boolean simulate(int x, int y) {
         int xV = x;
         int yV = y;
-        if (checkCoords(x, y)) {
-            positions.add(new Coordinate(x,y,y));
-            return true;
-        }
+        x -= xV;
+        y -= yV;
+
         int maxY = Integer.MIN_VALUE;
-        if (x > 0) {
-            xV--;
-        }
-        if (x < 0) {
-            xV++;
-        }
-        yV--;
 
         for (int i = 0; i < 1000; i++) {
             x += xV;
-            if (x > 0) {
+            if (xV > 0) {
                 xV--;
             }
-            if (x < 0) {
+            if (xV < 0) {
                 xV++;
             }
             y += yV;
