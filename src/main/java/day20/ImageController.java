@@ -13,28 +13,33 @@ public class ImageController {
     public int countLightpixels() {
         List<String> lines = readFile(Path.of("src/main/resources/day20.txt"));
         readFromLines(lines);
-        System.out.println(imageEnhancementAlgorithm);
+        //System.out.println(imageEnhancementAlgorithm);
         System.out.println(imageData);
+
         imageData = iterateOverPixels(imageData);
         System.out.println(imageData);
-        imageData = putZeros(imageData);
-        imageData = iterateOverPixels(imageData);
         System.out.println(countOnes(imageData));
+        imageData = putZeros(imageData);
+
+        imageData = iterateOverPixels(imageData);
+
         System.out.println(imageData);
+        System.out.println(countOnes(imageData));
         //4942 too high
-        //4622 too low
+        //4863 too low
         return 0;
     }
 
     private List<String> putZeros(List<String> imageData) {
         List<String> newPixels = new ArrayList<>();
         for (String s:imageData) {
-            newPixels.add("00" + s + "00");
+            newPixels.add("00"  + s + "00");
         }
         int lengthOfRow = newPixels.get(0).length();
         String zeros = "0".repeat(lengthOfRow);
         newPixels.add(zeros);
         newPixels.add(zeros);
+
         newPixels.add(0,zeros);
         newPixels.add(0,zeros);
         return newPixels;
