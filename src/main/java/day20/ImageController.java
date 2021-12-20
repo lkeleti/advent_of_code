@@ -16,10 +16,13 @@ public class ImageController {
         System.out.println(imageEnhancementAlgorithm);
         System.out.println(imageData);
         imageData = iterateOverPixels(imageData);
+        System.out.println(imageData);
         imageData = putZeros(imageData);
         imageData = iterateOverPixels(imageData);
         System.out.println(countOnes(imageData));
+        System.out.println(imageData);
         //4942 too high
+        //4622 too low
         return 0;
     }
 
