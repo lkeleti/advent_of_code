@@ -20,6 +20,7 @@ public class ImageController {
         System.out.println(imageData);
         System.out.println(countOnes(imageData));
         imageData = putZeros(imageData);
+        imageData = putZeros(imageData);
 
         imageData = iterateOverPixels(imageData);
 
@@ -33,26 +34,26 @@ public class ImageController {
     private List<String> putZeros(List<String> imageData) {
         List<String> newPixels = new ArrayList<>();
         for (String s:imageData) {
-            newPixels.add("00"  + s + "00");
+            newPixels.add("0"  + s + "0");
         }
         int lengthOfRow = newPixels.get(0).length();
         String zeros = "0".repeat(lengthOfRow);
-        newPixels.add(zeros);
+        //newPixels.add(zeros);
         newPixels.add(zeros);
 
-        newPixels.add(0,zeros);
+        //newPixels.add(0,zeros);
         newPixels.add(0,zeros);
         return newPixels;
     }
 
     private List<String> iterateOverPixels(List<String> imagePixels) {
         List<String> newPixels = new ArrayList<>();
-        for (int row = 0; row < imagePixels.size()-2; row++) {
+        for (int row = 1; row < imagePixels.size()-1; row++) {
             String line = "";
-            for (int col = 0; col < imagePixels.get(0).length()-2; col++) {
+            for (int col = 1; col < imagePixels.get(0).length()-1; col++) {
                 String value = "";
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
+                for (int i = -1; i < 2; i++) {
+                    for (int j = -1; j < 2; j++) {
                         value += imagePixels.get(row + i).charAt(col+j);
                     }
                 }
