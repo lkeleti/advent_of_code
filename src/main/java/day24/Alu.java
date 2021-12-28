@@ -17,10 +17,11 @@ public class Alu {
     public int processData() {
         List<String> lines = readFile(Path.of("src/main/resources/day24.txt"));
         readFromLines(lines);
-        for (Long i = 99999999999999L; i > 9999999999999L; i--) {
+        for (Long i = 99999999999999L; i > 11111111111111L; i--) {
             run(i);
+
             if (z == 0L) {
-                System.out.println("1");
+                System.out.println(i);
                 System.out.println("x: " + x);
                 System.out.println("y: " + y);
                 System.out.println("z: " + z);
@@ -41,10 +42,13 @@ public class Alu {
     }
 
     private void run(Long startValue) {
+        int inputCounter = 0;
+        String startValueString = String.valueOf(startValue);
         for (ProgLine pl : program) {
             switch (pl.getCommand()) {
                 case "inp":
-                    w = startValue;
+                    w = Long.parseLong(startValueString.substring(inputCounter,inputCounter+1));
+                    inputCounter++;
                     break;
                 case "add":
                     if (isNumber(pl.getOperand2())) {
